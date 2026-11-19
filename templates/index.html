@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Threat Detection Platform | Team 21 - Vasavi CN</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Header & Academic Information -->
+    <header class="header-card">
+      <div class="header-meta">
+        <span class="badge-tag">Vasavi College of Engineering</span>
+        <span class="badge-tag">Computer Networks (5th Sem)</span>
+        <span class="badge-tag">Team 21 &bull; Batch 2</span>
+      </div>
+      <h1>Email Threat Detection Platform</h1>
+      <p>Hybrid Ensemble: Rule-Based Network Protocols + AI/ML Threat Classification</p>
+      <div style="margin-top: 10px; font-size: 0.85rem; color: #cbd5e1;">
+        <strong>Team Members:</strong> 1602-24-737-164 &bull; 1602-24-737-163 &bull; 1602-24-737-165
+      </div>
+    </header>
+
+    <!-- Quick Load Sample Bar (Huge for viva demonstration!) -->
+    <div class="sample-bar">
+      <div class="sample-bar-label">
+        ⚡ <strong>Live Viva Demos:</strong> Click to load sample test data:
+      </div>
+      <div class="sample-btn-group">
+        <button type="button" class="btn-sample danger" onclick="loadSample('phishing')">
+          🔴 High-Risk Bank Phishing
+        </button>
+        <button type="button" class="btn-sample warning" onclick="loadSample('spoofed')">
+          🟡 PayPal Spoofed Sender
+        </button>
+        <button type="button" class="btn-sample safe" onclick="loadSample('safe')">
+          🟢 Clean GitHub Notice
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs between Manual Input & EML File Upload -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" id="tabManualBtn" onclick="switchTab('manual')">
+        📝 Manual Input Mode
+      </button>
+      <button class="tab-btn" id="tabUploadBtn" onclick="switchTab('upload')">
+        📁 Upload Saved .eml File
+      </button>
+    </div>
+
+    <!-- TAB 1: MANUAL FORM -->
+    <div id="manualTabContent" class="card">
+      <form action="{{ url_for('analyze') }}" method="POST" id="manualForm">
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="display_name">Sender Display Name (Optional):</label>
+            <input type="text" id="display_name" name="display_name" placeholder="e.g. State Bank of India Online">
+            <span class="form-helper">The friendly name rendered by the email client user-agent.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="sender_email">Sender Email Address (From: Header) *:</label>
+            <input type="email" id="sender_email" name="sender_email" placeholder="e.g. security@sbi-fraud-login.xyz" required>
+            <span class="form-helper">RFC 5322 header address. Checked against DNS & MX records.</span>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="return_path">Return-Path / Envelope Sender (Optional):</label>
+            <input type="text" id="return_path" name="return_path" placeholder="e.g. bounce@compromised-server.org">
+            <span class="form-helper">RFC 5321 SMTP MAIL FROM envelope address. Used to detect header spoofing.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Email Subject Line *:</label>
+            <input type="text" id="subject" name="subject" placeholder="e.g. URGENT: Account Suspended within 24 Hours!" required>
+            <span class="form-helper">Scanned for social engineering & psychological urgency triggers.</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="links">Embedded Links / Suspicious URLs (Optional):</label>
+          <input type="text" id="links" name="links" placeholder="e.g. http://192.168.1.105:8080/login.php">
+          <span class="form-helper">Separated by spaces. Checked for raw IP addressing, plain HTTP, and domain mismatch.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="body_text">Email Message Body *:</label>
+          <textarea id="body_text" name="body_text" rows="6" placeholder="Paste the email message content here..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          🔍 Analyze Email Threats & Inspect Network Headers
+        </button>
+      </form>
+    </div>
+
+    <!-- TAB 2: UPLOAD .EML FILE -->
+    <div id="uploadTabContent" class="card" style="display: none;">
+      <form action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data">
+        <div class="file-dropzone" onclick="document.getElementById('eml_file').click()">
+          <div style="font-size: 2.5rem; margin-bottom: 8px;">📬</div>
+          <h3 style="margin-bottom: 6px;">Select an RFC 5322 .eml file to upload</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Extracts full headers: <code>Received</code> hops, <code>Authentication-Results</code>, <code>Message-ID</code>, and raw body.
+          </p>
+          <input type="file" id="eml_file" name="eml_file" accept=".eml" style="display: none;" onchange="updateFileName(this)">
+          <div id="fileSelectedName" style="margin-top: 12px; font-weight: 600; color: var(--primary-blue);"></div>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          🚀 Upload & Run Network Protocol Inspection
+        </button>
+      </form>
+
+      <!-- Pre-packaged EML download shortcuts for testing -->
+      <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+        <h4 style="font-size: 0.95rem; margin-bottom: 10px;">📥 Download Sample Test Files to Try:</h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="{{ url_for('download_sample_file', filename='sample_phishing_urgent_bank.eml') }}" class="btn-sample danger">
+            ⬇️ sample_phishing_urgent_bank.eml
+          </a>
+          <a href="{{ url_for('download_sample_file', filename='sample_spoofed_sender.eml') }}" class="btn-sample warning">
+            ⬇️ sample_spoofed_sender.eml
+          </a>
+          <a href="{{ url_for('download_sample_file', filename='sample_legitimate.eml') }}" class="btn-sample safe">
+            ⬇️ sample_legitimate.eml
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Callout: CN Viva Principles Covered -->
+    <div class="viva-callout">
+      <h3>🌐 Computer Networks & Machine Learning Concepts Implemented:</h3>
+      <ul>
+        <li><strong>SMTP Architecture (RFC 5321 vs RFC 5322):</strong> Demonstrates how the envelope sender (<code>Return-Path</code>) diverges from the displayed <code>From:</code> header.</li>
+        <li><strong>DNS Resolution & MX Records:</strong> Verifies domain existence (A/AAAA records) and Mail Exchange (MX) server records using DNS protocols.</li>
+        <li><strong>Email Authentication Protocols:</strong> Inspects SPF (IP authorization via DNS TXT), DKIM (cryptographic signatures), and DMARC alignment.</li>
+        <li><strong>Transport & Application Layer Analysis:</strong> Evaluates HTTP (cleartext, port 80) vs HTTPS (TLS/SSL, port 443) and identifies direct IPv4 usage in hyperlinks.</li>
+        <li><strong>Multi-Hop SMTP Routing:</strong> Parses chained <code>Received:</code> headers to trace message traversal through intermediate Mail Transfer Agents (MTAs).</li>
+        <li><strong>AI / ML Ensemble Learning:</strong> Combines deterministic rule-based protocol heuristics with a TF-IDF & Logistic Regression classifier, computing an ensemble average score to minimize false positives and negatives.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tab) {
+      const manualTab = document.getElementById('manualTabContent');
+      const uploadTab = document.getElementById('uploadTabContent');
+      const tabManualBtn = document.getElementById('tabManualBtn');
+      const tabUploadBtn = document.getElementById('tabUploadBtn');
+
+      if (tab === 'manual') {
+        manualTab.style.display = 'block';
+        uploadTab.style.display = 'none';
+        tabManualBtn.classList.add('active');
+        tabUploadBtn.classList.remove('active');
+      } else {
+        manualTab.style.display = 'none';
+        uploadTab.style.display = 'block';
+        tabManualBtn.classList.remove('active');
+        tabUploadBtn.classList.add('active');
+      }
+    }
+
+    // Show chosen file name
+    function updateFileName(input) {
+      const display = document.getElementById('fileSelectedName');
+      if (input.files && input.files[0]) {
+        display.textContent = 'Selected: ' + input.files[0].name;
+      }
+    }
+
+    // Fast autofill for live viva demonstrations
+    function loadSample(sampleType) {
+      switchTab('manual');
+      fetch('/api/sample/' + sampleType)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('display_name').value = data.display_name || '';
+          document.getElementById('sender_email').value = data.sender_email || '';
+          document.getElementById('return_path').value = data.return_path || '';
+          document.getElementById('subject').value = data.subject || '';
+          document.getElementById('links').value = data.links || '';
+          document.getElementById('body_text').value = data.body_text || '';
+        })
+        .catch(err => console.error("Error loading sample:", err));
+    }
+  </script>
+</body>
+</html>

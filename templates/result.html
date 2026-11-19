@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Threat Analysis Report | Team 21 - Vasavi CN</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Bar with Back and Print buttons -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;" class="no-print">
+      <a href="{{ url_for('index') }}" class="btn-secondary">&larr; Scan Another Email</a>
+      <div>
+        <button onclick="window.print()" class="btn-secondary" style="cursor: pointer;">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="header-card">
+      <div class="header-meta">
+        <span class="badge-tag">Vasavi CN 5th Sem</span>
+        <span class="badge-tag">Team 21 &bull; Batch 2</span>
+        <span class="badge-tag">{{ data.source_type }}</span>
+      </div>
+      <h1>Email Threat Detection Report</h1>
+      <p>Hybrid Ensemble: Rule-Based Network Protocols + AI/ML Threat Classification</p>
+    </header>
+
+    <!-- Overall Final Threat Score Banner -->
+    <div class="score-card {{ result.risk_class }}">
+      <div class="score-number-box">
+        <div class="score-value">{{ result.score }}</div>
+        <div class="score-scale">out of 100 (Final Ensemble Average)</div>
+      </div>
+      <div class="score-info">
+        <span class="risk-pill">{{ result.risk_level }}</span>
+        <div class="verdict-text">{{ result.verdict }}</div>
+      </div>
+    </div>
+
+    <!-- TRI-METRIC HYBRID ENSEMBLE BREAKDOWN -->
+    <div class="ensemble-grid">
+      <!-- Metric 1: Rule Engine -->
+      <div class="ensemble-metric-card">
+        <div class="ensemble-metric-header">
+          <span class="ensemble-tag">Protocol Rules</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Deterministic</span>
+        </div>
+        <div class="ensemble-score-display">
+          <span class="ensemble-score-num" style="color: {% if result.rule_score < 30 %}var(--risk-safe){% elif result.rule_score < 60 %}var(--risk-warn){% else %}var(--risk-danger){% endif %};">
+            {{ result.rule_score }}
+          </span>
+          <span class="ensemble-score-denom">/ 100 pts</span>
+        </div>
+        <div class="ensemble-desc">
+          <strong>Rule-Based Engine:</strong> Evaluates SMTP headers, DNS MX records, SPF/DKIM verification, and link protocols.
+        </div>
+      </div>
+
+      <!-- Metric 2: AI/ML Model -->
+      <div class="ensemble-metric-card">
+        <div class="ensemble-metric-header">
+          <span class="ensemble-tag" style="background: #ede9fe; color: #6d28d9;">AI / ML Model</span>
+          <span style="font-size: 0.8rem; color: #6d28d9;">Probabilistic</span>
+        </div>
+        <div class="ensemble-score-display">
+          <span class="ensemble-score-num" style="color: {% if result.ml_score < 30 %}var(--risk-safe){% elif result.ml_score < 60 %}var(--risk-warn){% else %}var(--risk-danger){% endif %};">
+            {{ result.ml_score }}
+          </span>
+          <span class="ensemble-score-denom">/ 100 pts</span>
+        </div>
+        <div class="ensemble-desc">
+          <strong>Machine Learning:</strong> TF-IDF N-grams & Logistic Regression classifier assessing text semantics and structure.
+        </div>
+      </div>
+
+      <!-- Metric 3: Ensemble Average -->
+      <div class="ensemble-metric-card final">
+        <div class="ensemble-metric-header">
+          <span class="ensemble-tag">Ensemble Average</span>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary-blue);">Decisive Score</span>
+        </div>
+        <div class="ensemble-score-display">
+          <span class="ensemble-score-num" style="color: {% if result.score < 30 %}var(--risk-safe){% elif result.score < 60 %}var(--risk-warn){% else %}var(--risk-danger){% endif %};">
+            {{ result.score }}
+          </span>
+          <span class="ensemble-score-denom">/ 100 pts</span>
+        </div>
+        <div class="ensemble-desc">
+          <strong>Combined Formula:</strong> <code>round(({{ result.rule_score }} + {{ result.ml_score }}) / 2) = {{ result.score }}</code>. Threat level determined from this final average.
+        </div>
+      </div>
+    </div>
+
+    <!-- AI / MACHINE LEARNING THREAT ANALYSIS CARD -->
+    <div class="card" style="border-left: 4px solid #8b5cf6;">
+      <h2 style="font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <span>🤖 AI / Machine Learning Threat Analysis</span>
+        <span class="ensemble-tag" style="background: #ede9fe; color: #6d28d9;">Scikit-Learn ML Classifier</span>
+      </h2>
+
+      <div class="table-responsive">
+        <table>
+          <tbody>
+            <tr>
+              <td style="width: 28%; font-weight: 600;">ML Model Architecture</td>
+              <td><code>{{ result.ml_details.model_name }}</code></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Phishing Probability Score</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <strong style="font-size: 1.1rem; color: {% if result.ml_score < 30 %}var(--risk-safe){% elif result.ml_score < 60 %}var(--risk-warn){% else %}var(--risk-danger){% endif %};">
+                    {{ (result.ml_details.phishing_probability * 100) | round(1) }}%
+                  </strong>
+                  <span style="font-size: 0.85rem; color: var(--text-muted);">(Model Confidence: <strong>{{ result.ml_details.confidence_level }}</strong>)</span>
+                </div>
+                <!-- Probability Bar -->
+                <div class="prob-bar-container" style="max-width: 450px;">
+                  <div class="prob-bar-phish" style="width: {{ result.ml_score }}%;"></div>
+                  <div class="prob-bar-legit" style="width: {{ 100 - result.ml_score }}%;"></div>
+                </div>
+                <div class="prob-legend" style="max-width: 450px;">
+                  <span style="color: var(--risk-danger);">🔴 Phishing: {{ (result.ml_details.phishing_probability * 100) | round(1) }}%</span>
+                  <span style="color: var(--risk-safe);">🟢 Legitimate: {{ (result.ml_details.legit_probability * 100) | round(1) }}%</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Key Indicators Extracted</td>
+              <td>
+                {% if result.ml_details.top_features %}
+                <div class="feature-badge-list">
+                  {% for feat in result.ml_details.top_features %}
+                  <span class="feature-badge">
+                    ⚠️ {{ feat.feature }} ({{ feat.importance }})
+                  </span>
+                  {% endfor %}
+                </div>
+                {% else %}
+                <span style="color: var(--risk-safe); font-size: 0.9rem;">
+                  ✓ No high-threat text patterns or statistical anomalies detected by the classifier.
+                </span>
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cn-box" style="margin-top: 14px; background: #faf5ff; border-left-color: #8b5cf6; color: #581c87;">
+        <strong style="color: #6b21a8;">🧠 Machine Learning Viva Principle: Ensemble Learning (Rules + ML)</strong>
+        Rule-based systems enforce strict, deterministic protocol checks (e.g. DNS NXDOMAIN, SPF cryptographic authentication, raw IP hyperlinks). 
+        Meanwhile, Machine Learning models analyze semantic context, psychological urgency n-grams, and multivariate feature correlations. 
+        Averaging both models mitigates false positives and false negatives, producing an ensemble threat score that is both explainable and resilient.
+      </div>
+    </div>
+
+    <!-- TRIGGERED RULES & CN VIVA EXPLANATION -->
+    <div class="card">
+      <h2 style="font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <span>🛡️ Security Rules Triggered ({{ result.triggered_count }} / {{ result.total_rules_checked }} Checked)</span>
+        <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">Non-AI Rule Engine</span>
+      </h2>
+
+      {% if result.triggered_rules %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 25%;">Rule Name</th>
+              <th style="width: 10%;">Score</th>
+              <th style="width: 35%;">Observed Anomaly</th>
+              <th style="width: 30%;">CN Viva Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in result.triggered_rules %}
+            <tr>
+              <td><strong>{{ r.rule }}</strong></td>
+              <td>
+                {% if r.points > 0 %}
+                  <span class="points-badge">+{{ r.points }} pts</span>
+                {% else %}
+                  <span class="points-badge" style="background: #dcfce7; color: #15803d;">{{ r.points }} pts</span>
+                {% endif %}
+              </td>
+              <td>{{ r.details }}</td>
+              <td>
+                <div class="cn-box">
+                  <strong>🌐 CN Principle:</strong>
+                  {{ r.cn_concept }}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div style="padding: 20px; text-align: center; color: var(--risk-safe); font-weight: 600;">
+        ✅ No threat indicators or protocol discrepancies detected! All evaluated rules passed successfully.
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- NETWORK HEADER & IDENTITY ALIGNMENT -->
+    <div class="card">
+      <h2 style="font-size: 1.25rem; margin-bottom: 14px;">✉️ Header & Transport Layer Identity Alignment</h2>
+      <div class="table-responsive">
+        <table>
+          <tbody>
+            <tr>
+              <td style="width: 30%; font-weight: 600;">Display Name (User Agent)</td>
+              <td>{{ data.display_name if data.display_name else "Not specified" }}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Displayed Sender (From: Header)</td>
+              <td><code>{{ data.sender_email }}</code></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Envelope Sender (Return-Path)</td>
+              <td>
+                {% if data.return_path %}
+                  <code>{{ data.return_path }}</code>
+                  {% if result.sender_domain and data.return_path and (result.sender_domain not in data.return_path) %}
+                    <span class="points-badge" style="margin-left: 8px;">⚠️ Envelope Mismatch</span>
+                  {% else %}
+                    <span style="color: var(--risk-safe); font-weight: 600; margin-left: 8px;">✓ Aligned</span>
+                  {% endif %}
+                {% else %}
+                  <span style="color: var(--text-muted);">Not provided in headers</span>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Subject Line</td>
+              <td>{{ data.subject }}</td>
+            </tr>
+            {% if data.message_id and data.message_id != 'N/A' %}
+            <tr>
+              <td style="font-weight: 600;">Message-ID Header</td>
+              <td><code>{{ data.message_id }}</code></td>
+            </tr>
+            {% endif %}
+            {% if data.date and data.date != 'N/A' %}
+            <tr>
+              <td style="font-weight: 600;">Origination Date</td>
+              <td>{{ data.date }}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DNS & MX RECORD VERIFICATION -->
+    {% if result.dns_info %}
+    <div class="card">
+      <h2 style="font-size: 1.25rem; margin-bottom: 14px;">🌐 DNS & Mail Exchange (MX) Verification</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Inspection Parameter</th>
+              <th>Status</th>
+              <th>Technical Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Domain DNS Resolution (A/AAAA)</strong></td>
+              <td>
+                {% if result.dns_info.domain_resolves %}
+                  <span style="color: var(--risk-safe); font-weight: 700;">✓ RESOLVED</span>
+                {% else %}
+                  <span style="color: var(--risk-danger); font-weight: 700;">✗ NXDOMAIN</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if result.dns_info.domain_resolves %}
+                  IP Addresses: <code>{{ result.dns_info.ip_addresses | join(', ') }}</code>
+                {% else %}
+                  {{ result.dns_info.dns_error }}
+                {% endif %}
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>MX (Mail Exchange) Records</strong></td>
+              <td>
+                {% if result.dns_info.has_mx %}
+                  <span style="color: var(--risk-safe); font-weight: 700;">✓ CONFIGURED</span>
+                {% else %}
+                  <span style="color: var(--risk-danger); font-weight: 700;">✗ NO MX FOUND</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if result.dns_info.mx_records %}
+                  Servers: <code>{{ result.dns_info.mx_records | join(', ') }}</code>
+                {% else %}
+                  Domain cannot legitimately receive incoming email or bounces.
+                {% endif %}
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>SPF Record (DNS TXT)</strong></td>
+              <td>
+                {% if result.dns_info.has_spf %}
+                  <span style="color: var(--risk-safe); font-weight: 700;">✓ PUBLISHED</span>
+                {% else %}
+                  <span style="color: var(--risk-warn); font-weight: 700;">⚠️ MISSING</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if result.dns_info.spf_record %}
+                  <code>{{ result.dns_info.spf_record }}</code>
+                {% else %}
+                  No <code>v=spf1</code> record found. Domain vulnerable to email spoofing.
+                {% endif %}
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>DMARC Record (DNS TXT)</strong></td>
+              <td>
+                {% if result.dns_info.has_dmarc %}
+                  <span style="color: var(--risk-safe); font-weight: 700;">✓ PUBLISHED</span>
+                {% else %}
+                  <span style="color: var(--risk-warn); font-weight: 700;">⚠️ MISSING</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if result.dns_info.dmarc_record %}
+                  <code>{{ result.dns_info.dmarc_record }}</code>
+                {% else %}
+                  No <code>_dmarc</code> policy found in DNS.
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- HYPERLINK & PROTOCOL SECURITY -->
+    <div class="card">
+      <h2 style="font-size: 1.25rem; margin-bottom: 14px;">🔗 Embedded Hyperlink & URL Analysis</h2>
+      {% if result.urls %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Detected URL</th>
+              <th>Scheme / Port</th>
+              <th>Host Type</th>
+              <th>Risk Evaluation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in result.urls %}
+            <tr>
+              <td style="word-break: break-all;"><code>{{ u.original_url }}</code></td>
+              <td>
+                {% if u.is_http %}
+                  <span class="points-badge">HTTP (Insecure Port 80)</span>
+                {% else %}
+                  <span style="color: var(--risk-safe); font-weight: 600;">HTTPS (TLS/SSL)</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if u.is_ip_based %}
+                  <span class="points-badge">⚠️ Raw IPv4 Address</span>
+                {% else %}
+                  <span>Domain ({{ u.host }})</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if u.is_ip_based or u.is_http %}
+                  <span style="color: var(--risk-danger); font-weight: 600;">Suspicious URL destination</span>
+                {% else %}
+                  <span style="color: var(--risk-safe); font-weight: 600;">Standard URL format</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p style="color: var(--text-muted); font-size: 0.9rem;">No hyperlinks were found in the email content.</p>
+      {% endif %}
+    </div>
+
+    <!-- SMTP ROUTING & RELAY HOPS (EML ONLY) -->
+    {% if result.hops %}
+    <div class="card">
+      <h2 style="font-size: 1.25rem; margin-bottom: 12px;">🗺️ Multi-Hop SMTP Relay Routing (Received Headers)</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+        Every intermediate SMTP MTA prepends a <code>Received:</code> header. Reading bottom-to-top shows the journey across the Internet.
+      </p>
+      <div class="hop-list">
+        {% for hop in result.hops %}
+        <div class="hop-item">
+          <span class="hop-num">Hop {{ hop.hop_number }}</span>
+          <div style="flex: 1; word-break: break-all;">
+            <div>{{ hop.raw_header }}</div>
+            {% if hop.extracted_ips %}
+            <div style="margin-top: 4px; font-size: 0.75rem; color: var(--primary-blue);">
+              <strong>Extracted Hop IPs:</strong> {{ hop.extracted_ips | join(', ') }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Bottom Actions -->
+    <div style="text-align: center; margin-top: 30px;" class="no-print">
+      <a href="{{ url_for('index') }}" class="btn-primary" style="display: inline-block; width: auto; padding: 12px 36px; text-decoration: none;">
+        ⬅️ Scan Another Email
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>

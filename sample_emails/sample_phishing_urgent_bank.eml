@@ -1,0 +1,31 @@
+Delivered-To: victim@example.edu
+Received: by 2002:a17:902:c489:b0:1d2:7412:984 with SMTP id e9csp2547372cud;
+        Fri, 23 Oct 2026 10:30:10 -0700 (PDT)
+Received: from unknown-relay.host-cloud.ru ([185.220.101.5])
+        by mx.google.com with ESMTP id h12-20020a170902959200b001dc2a92211fsi2189851plp.137.2026.10.23.10.30.09
+        for <victim@example.edu>;
+        Fri, 23 Oct 2026 10:30:10 -0700 (PDT)
+Authentication-Results: mx.google.com;
+       spf=fail (google.com: domain of sbi-fraud-verification-portal.xyz does not designate 185.220.101.5 as permitted sender) smtp.mailfrom=bounce@compromised-server-32.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=sbi-fraud-verification-portal.xyz
+Received-SPF: fail (google.com: domain of sbi-fraud-verification-portal.xyz does not designate 185.220.101.5 as permitted sender) client-ip=185.220.101.5;
+Return-Path: <bounce@compromised-server-32.org>
+From: State Bank of India Online <security-alert@sbi-fraud-verification-portal.xyz>
+To: victim@example.edu
+Subject: URGENT: Account Suspended - Immediate Action Required within 24 hours!
+Date: Fri, 23 Oct 2026 17:30:00 +0000
+Message-ID: <threat-campaign-992@fraud-server>
+Content-Type: text/plain; charset="UTF-8"
+
+DEAR CUSTOMER,
+
+YOUR SBI BANK ACCOUNT HAS BEEN SUSPENDED DUE TO UNAUTHORIZED ACCESS FROM AN UNKNOWN IP ADDRESS.
+IMMEDIATE ACTION REQUIRED WITHIN 24 HOURS OR YOUR NETBANKING ACCESS WILL BE PERMANENTLY BLOCKED.
+
+CLICK HERE IMMEDIATELY TO VERIFY YOUR ACCOUNT:
+http://192.168.1.105:8080/sbi/verify_login.php
+
+PLEASE HAVE YOUR DEBIT CARD NUMBER AND OTP READY FOR VERIFICATION.
+
+SECURITY ALERT TEAM,
+STATE BANK CUSTOMER CARE

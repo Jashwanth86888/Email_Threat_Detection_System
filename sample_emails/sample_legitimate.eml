@@ -1,0 +1,32 @@
+Delivered-To: student@example.edu
+Received: by 2002:a17:902:c489:b0:1d2:7412:984 with SMTP id e9csp2547372cud;
+        Fri, 23 Oct 2026 09:15:22 -0700 (PDT)
+Received: from mail-relay.github.com (mail-relay.github.com. [140.82.114.25])
+        by mx.google.com with ESMTPS id o18-20020a170902959200b001dc2a92211fsi2189851plp.137.2026.10.23.09.15.21
+        for <student@example.edu>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Oct 2026 09:15:22 -0700 (PDT)
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@github.com header.s=pf2023 header.b=YqD2F6iL;
+       spf=pass (google.com: domain of notifications@github.com designates 140.82.114.25 as permitted sender) smtp.mailfrom=notifications@github.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=github.com
+Received-SPF: pass (google.com: domain of notifications@github.com designates 140.82.114.25 as permitted sender) client-ip=140.82.114.25;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=github.com;
+Return-Path: <notifications@github.com>
+From: GitHub Notifications <notifications@github.com>
+To: student@example.edu
+Subject: [GitHub] Security advisory alert closed
+Date: Fri, 23 Oct 2026 16:15:20 +0000
+Message-ID: <github/computer-networks-project/alerts/12@github.com>
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Developer,
+
+The automated security advisory alert on your repository has been successfully closed.
+All dependencies are now verified and running the latest stable protocols.
+
+You can review your repository settings at any time:
+https://github.com/security/advisories
+
+Thanks,
+The GitHub Security Team

@@ -1,0 +1,28 @@
+Delivered-To: victim@example.edu
+Received: from spam-bot-network.net (spam-bot-network.net [198.51.100.42])
+        by mail.inbound-server.com with SMTP id 88291410293
+        for <victim@example.edu>; Fri, 23 Oct 2026 11:00:00 +0000
+Authentication-Results: mail.inbound-server.com;
+       spf=softfail smtp.mailfrom=attacker@free-mailer-relay.net;
+       dkim=none;
+       dmarc=fail (p=REJECT) header.from=paypal.com
+Received-SPF: softfail (mail.inbound-server.com: 198.51.100.42 is transitioning SPF)
+Return-Path: <attacker@free-mailer-relay.net>
+From: PayPal Customer Support <service@paypal.com>
+To: victim@example.edu
+Subject: Security Alert: Confirm your identity and password expired
+Date: Fri, 23 Oct 2026 11:00:00 +0000
+Message-ID: <spoof-id-1029348@mail>
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+We detected unusual activity and your password expired today.
+Immediate action required: Confirm your identity to prevent access restricted status.
+
+Please visit the link below to unlock your PayPal account:
+http://paypal-resolution-center.biz/update_profile.html
+
+Thank you for your prompt attention to this matter.
+
+PayPal Security Operations
